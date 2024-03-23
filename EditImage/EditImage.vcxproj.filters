@@ -59,25 +59,25 @@
     <Image Include="res\EditImage.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\icon\flip.ico">
+    <Image Include="res\icon\flip.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\icon\open.ico">
+    <Image Include="res\icon\open.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\icon\reset.ico">
+    <Image Include="res\icon\reset.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\icon\rotate.ico">
+    <Image Include="res\icon\rotate.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\icon\save.ico">
+    <Image Include="res\icon\save.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\icon\view2x2.ico">
+    <Image Include="res\icon\view2x2.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\icon\viewDefault.ico">
+    <Image Include="res\icon\viewDefault.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

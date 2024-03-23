@@ -26,12 +26,17 @@
 #define IDSAVE                          1007
 #define IDC_BTN_SAVE                    1007
 #define IDC_BTN_UP                      1008
+#define IDC_BTN_PANRIGHT                1008
 #define IDC_BTN_ROTATE                  1009
 #define IDC_BTN_FLIP                    1010
 #define IDC_BTN_ZOOMOUT                 1011
 #define IDC_BTN_LEFT                    1012
+#define IDC_BTN_ZOOMIN3                 1012
+#define IDC_BTN_PANLEFT                 1012
 #define IDC_BTN_RIGHT                   1013
+#define IDC_BTN_PANDOWN                 1013
 #define IDC_BTN_DOWN                    1014
+#define IDC_BTN_PANUP                   1014
 #define IDC_PICTURE                     1016
 #define IDC_PICTURE_BOX                 1016
 #define IDC_PICTURE_2                   1017

@@ -207,14 +207,14 @@
     <None Include="res\EditImage.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\icon\flip.ico" />
-    <Image Include="..\icon\open.ico" />
-    <Image Include="..\icon\reset.ico" />
-    <Image Include="..\icon\rotate.ico" />
-    <Image Include="..\icon\save.ico" />
-    <Image Include="..\icon\view2x2.ico" />
-    <Image Include="..\icon\viewDefault.ico" />
     <Image Include="res\EditImage.ico" />
+    <Image Include="res\icon\flip.ico" />
+    <Image Include="res\icon\open.ico" />
+    <Image Include="res\icon\reset.ico" />
+    <Image Include="res\icon\rotate.ico" />
+    <Image Include="res\icon\save.ico" />
+    <Image Include="res\icon\view2x2.ico" />
+    <Image Include="res\icon\viewDefault.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

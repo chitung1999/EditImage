@@ -66,7 +66,6 @@ CEditImageDlg::CEditImageDlg(CWnd* pParent /*=nullptr*/)
 	m_iYImage(0),
 	m_iWidthImage(0),
 	m_iHeightImage(0),
-	m_iXPointClick(0),
 	m_isFlip(false),
 	m_isDefaultView(true)
 {
@@ -86,6 +85,7 @@ BEGIN_MESSAGE_MAP(CEditImageDlg, CDialogEx)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
 	ON_BN_CLICKED(IDC_BTN_SELECT, &CEditImageDlg::OnBnClickedBtnSelect)
 	ON_BN_CLICKED(IDC_BTN_VIEW, &CEditImageDlg::OnBnClickedBtnView)
 	ON_BN_CLICKED(IDC_BTN_INBRI, &CEditImageDlg::OnBnClickedBtnInbri)
@@ -99,6 +99,10 @@ BEGIN_MESSAGE_MAP(CEditImageDlg, CDialogEx)
 	ON_BN_CLICKED(IDSAVE, &CEditImageDlg::OnBnClickedSave)
 	ON_BN_CLICKED(IDRESET, &CEditImageDlg::OnBnClickedReset)
 	ON_BN_CLICKED(IDC_BTN_OK, &CEditImageDlg::OnBnClickedBtnOk)
+	ON_BN_CLICKED(IDC_BTN_PANUP, &CEditImageDlg::OnBnClickedBtnPanup)
+	ON_BN_CLICKED(IDC_BTN_PANRIGHT, &CEditImageDlg::OnBnClickedBtnPanright)
+	ON_BN_CLICKED(IDC_BTN_PANDOWN, &CEditImageDlg::OnBnClickedBtnPandown)
+	ON_BN_CLICKED(IDC_BTN_PANLEFT, &CEditImageDlg::OnBnClickedBtnPanleft)
 END_MESSAGE_MAP()
 
 
@@ -140,7 +144,6 @@ BOOL CEditImageDlg::OnInitDialog()
 	m_iRotate = 0;
 	m_iXImage = 0;
 	m_iYImage = 0;
-	m_iXPointClick = 0;
 	m_isFlip = false;
 	m_isDefaultView = true;
 
@@ -392,35 +395,109 @@ void CEditImageDlg::OnBnClickedReset()
 	if (m_imageOrigin.IsNull()) {
 		return;
 	}
-
+	LogTimeline(_T("Reset - START"));
 	Initialize();
 	EditImage();
+	LogTimeline(_T("Reset - END"));
 }
 
 
+
+void CEditImageDlg::OnBnClickedBtnPanup()
+{
+	if (m_imageOrigin.IsNull()) {
+		return;
+	}
+	LogTimeline(_T("Pan Up - START"));
+	m_iYImage -= 10;
+	EditImage();
+	LogTimeline(_T("Pan Up - END"));
+}
+
+
+void CEditImageDlg::OnBnClickedBtnPanright()
+{
+	if (m_imageOrigin.IsNull()) {
+		return;
+	}
+
+	LogTimeline(_T("Pan Right - START"));
+	m_iXImage += 10;
+	EditImage();
+	LogTimeline(_T("Pan Right - END"));
+}
+
+
+void CEditImageDlg::OnBnClickedBtnPandown()
+{
+	if (m_imageOrigin.IsNull()) {
+		return;
+	}
+
+	LogTimeline(_T("Pan Down - START"));
+	m_iYImage += 10;
+	EditImage();
+	LogTimeline(_T("Pan Down - END"));
+}
+
+
+void CEditImageDlg::OnBnClickedBtnPanleft()
+{
+	if (m_imageOrigin.IsNull()) {
+		return;
+	}
+
+	LogTimeline(_T("Pan Left - START"));
+	m_iXImage -= 10;
+	EditImage();
+	LogTimeline(_T("Pan Left - END"));
+}
+
 void CEditImageDlg::OnLButtonUp(UINT nFlags, CPoint point) {
-	if (point.x < m_iXPointClick)
-		OnBnClickedBtnDebri();
-	else
-		OnBnClickedBtnInbri();
+	m_mouseInfo.isLeftPress = false;
 }
 
 void CEditImageDlg::OnRButtonUp(UINT nFlags, CPoint point) {
-	if (point.x < m_iXPointClick)
-		OnBnClickedBtnDecon();
-	else
-		OnBnClickedBtnIncon();
+	m_mouseInfo.isRightPress = false;
 }
 
 void CEditImageDlg::OnLButtonDown(UINT nFlags, CPoint point) {
-	m_iXPointClick = point.x;
-	CString str;
-	str.Format(_T("%d"), point.x);
-	LogTimeline(str);
+	if (m_mouseInfo.isLeftPress || m_mouseInfo.isRightPress) {
+		return;
+	}
+
+	m_mouseInfo.isLeftPress = true;
+	m_mouseInfo.x = point.x;
 }
 
 void CEditImageDlg::OnRButtonDown(UINT nFlags, CPoint point) {
-	m_iXPointClick = point.x;
+	if (m_mouseInfo.isLeftPress || m_mouseInfo.isRightPress) {
+		return;
+	}
+
+	m_mouseInfo.isRightPress = true;
+	m_mouseInfo.x = point.x;
+}
+
+void CEditImageDlg::OnMouseMove(UINT nFlags, CPoint point) {
+	if (!m_mouseInfo.isLeftPress && !m_mouseInfo.isRightPress && m_imageOrigin.IsNull()) {
+		return;
+	}
+
+	if ((point.x - m_mouseInfo.x) > 30) {
+		m_mouseInfo.x = point.x;
+		if(m_mouseInfo.isLeftPress)
+			OnBnClickedBtnInbri();
+		else if(m_mouseInfo.isRightPress)
+			OnBnClickedBtnIncon();
+	}
+	else if ((m_mouseInfo.x - point.x) > 30) {
+		m_mouseInfo.x = point.x;
+		if (m_mouseInfo.isLeftPress)
+			OnBnClickedBtnDebri();
+		else if (m_mouseInfo.isRightPress)
+			OnBnClickedBtnDecon();
+	}
 }
 
 void CEditImageDlg::Initialize() {
@@ -508,36 +585,29 @@ void CEditImageDlg::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 
 	for (UINT j = 0; j < num; ++j)
 	{
-		if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
-		{
-			*pClsid = pImageCodecInfo[j].Clsid;
-			free(pImageCodecInfo);
-			return;
-		}
+		*pClsid = pImageCodecInfo[j].Clsid;
+		free(pImageCodecInfo);
+		return;
 	}
 
 	free(pImageCodecInfo);
 }
 
 BOOL CEditImageDlg::PreTranslateMessage(MSG* pMsg) {
-	if (pMsg->message == WM_KEYDOWN && !m_imageOrigin.IsNull()) {
+	if (pMsg->message == WM_KEYDOWN) {
 		switch (pMsg->wParam)
 		{
 		case VK_UP:
-			m_iYImage -= 10;
-			EditImage();
+			OnBnClickedBtnPanup();
 			break;
 		case VK_DOWN:
-			m_iYImage += 10;
-			EditImage();
+			OnBnClickedBtnPandown();
 			break;
 		case VK_LEFT:
-			m_iXImage -= 10;
-			EditImage();
+			OnBnClickedBtnPanleft();
 			break;
 		case VK_RIGHT:
-			m_iXImage += 10;
-			EditImage();
+			OnBnClickedBtnPanright();
 			break;
 		default:
 			break;
